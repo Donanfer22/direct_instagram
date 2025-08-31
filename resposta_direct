@@ -1,0 +1,483 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "e4cb608",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1660,
+        -620
+      ],
+      "id": "1b086d59-619f-49ef-ba3e-6bc839dc3110",
+      "name": "Webhook",
+      "webhookId": "e4cb608f-122d-4c6e-b16d-ecf0b5068b8f",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=oi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        -1380,
+        -620
+      ],
+      "id": "a9ed14a9-216e-4436-bb66-e3f63d7485cb",
+      "name": "Respond to Webhook",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -680,
+        -600
+      ],
+      "id": "e3b33001-c413-4629-b2c7-457f12b98e30",
+      "name": "Minha Mensagem",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.message }}",
+        "options": {
+          "systemMessage": "=Você é a Betina atendente do instagram de @glaucormartins, está respondendo no momento {{ $json.nome }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -340,
+        -600
+      ],
+      "id": "b7296b01-bedb-486a-9774-b128f0fd4c0d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8a172a71-f8d9-48fd-9021-75c162a5d500",
+              "leftValue": "={{ $json.body.entry[0].messaging[0].message.is_echo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -680,
+        -420
+      ],
+      "id": "6492773f-3b7a-4fe5-ba53-d74a8554043b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {
+          "frequencyPenalty": 0.7,
+          "maxTokens": 300
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        -360
+      ],
+      "id": "f28580bd-2cee-416f-b7d1-bc9546220e9e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "5XREI2HcNoYNbJTx",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.user_id }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -260,
+        -360
+      ],
+      "id": "27deab36-9ac1-47f1-88ed-c341ecc89e6f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -360
+      ],
+      "id": "b1023db0-e528-4878-94e7-76db46ca20d0",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "57cc4631-a7f1-4a09-9de0-0aa888394133",
+              "name": "nome",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "b932c4e2-4201-4817-ad5a-97b69e47360d",
+              "name": "user_name",
+              "value": "={{ $json.username }}",
+              "type": "string"
+            },
+            {
+              "id": "7d114548-a1ea-48b5-bfb2-514fd95422d6",
+              "name": "user_id",
+              "value": "={{ $('Instagram').item.json.body.entry[0].messaging[0].sender.id }}",
+              "type": "string"
+            },
+            {
+              "id": "bb8b4e5e-f133-48fe-8aa9-d1a269ab4f3d",
+              "name": "profile_img",
+              "value": "={{ $json.profile_pic }}",
+              "type": "string"
+            },
+            {
+              "id": "51a7a92a-14dd-4a87-8d01-3e7868594e36",
+              "name": "seguidores",
+              "value": "={{ $json.follower_count }}",
+              "type": "number"
+            },
+            {
+              "id": "a3b9e25d-bbc0-4c3a-8b12-7940721de3ba",
+              "name": "message",
+              "value": "={{ $('Instagram').item.json.body.entry[0].messaging[0].message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -840,
+        -420
+      ],
+      "id": "1665bbf6-58c5-4e7d-8eff-098660063f7e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.instagram.com/v21.0/me/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer seutoken"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message.text",
+              "value": "={{ $json.result }}"
+            },
+            {
+              "name": "recipient.id",
+              "value": "={{ $('If').item.json.user_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        -460
+      ],
+      "id": "b5fd403f-7863-4a53-befd-0f3789a15cd5",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtém a saída do nó \"AI Agent\"\nconst output = $input.first().json.output;\n// Remove os números seguidos por ponto e espaço no início de cada linha\nconst cleanedOutput = output.replace(/^\\d+\\.\\s+/gm, '')\n                           // Remove texto entre asteriscos (ex.: *teste*) ou apenas os asteriscos\n                           .replace(/\\*.*?\\*/g, '');\n// Divide o texto em frases (usando ponto final seguido de espaço como delimitador)\nconst splitOutput = cleanedOutput.split(/(?<=\\.)\\s+/).filter(part => part.trim() !== '');\n// Retorna o resultado como array de objetos\nreturn splitOutput.map(part => ({ json: { result: part.trim() } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        100,
+        -480
+      ],
+      "id": "264fc916-13f5-4b37-b3c3-4991ec147802",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "batchSize": "=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        320,
+        -480
+      ],
+      "id": "a9ca6f85-ef0b-4170-af3f-19bbe1a1b5d7",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "https://graph.instagram.com/v22.0/id-do-send?access_token=seu-accesse-token",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1020,
+        -420
+      ],
+      "id": "11ccb27c-1088-46bf-8255-194b80644964",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e4cb608f-122d-4c6e-b16d-ecf0b5068b8f",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1040,
+        -620
+      ],
+      "id": "94ed4be6-7623-4678-a38b-d72b8488d65c",
+      "name": "Instagram",
+      "webhookId": "e4cb608f-122d-4c6e-b16d-ecf0b5068b8f"
+    },
+    {
+      "parameters": {
+        "content": "## Recupera Token Meta",
+        "height": 260,
+        "width": 540
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1720,
+        -680
+      ],
+      "typeVersion": 1,
+      "id": "eed8ddd2-ca85-4555-bff5-229525a3535f",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Instagram": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Minha Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bb23a47e-9620-46ef-9c69-4ae1386a8e11",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "62ade33feea40d5342f34dc690cf017968464582f7829d6b22da6d5804c83416"
+  },
+  "id": "hG2wXdApjPFfzcZE",
+  "tags": []
+}
